@@ -1,0 +1,14 @@
+{
+	"folders": [
+		{
+			"path": "../linear_mse"
+		},
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"liveServer.settings.multiRootWorkspaceName": "digit_recognition",
+		"liveServer.settings.port": 5501
+	}
+}

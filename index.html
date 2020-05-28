@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TensorFlow.js Tutorial</title>
+
+    <!-- Import TensorFlow.js -->
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@2.0.0/dist/tf.min.js"></script>
+    <!-- Import tfjs-vis -->
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-vis@1.4.0/dist/tfjs-vis.umd.min.js"></script>
+
+    <!-- Import the data file -->
+    <script src="data.js" type="module"></script>
+
+    <!-- Import the main script file -->
+    <script src="script.js" type="module"></script>
+
+</head>
+
+<body>
+    <div><button id="trainbutton">push to train</button></div>
+
+    <div>
+        <!-- the canvas -->
+        <canvas id="can" width="280" height="280" style="top:10%;left:10%;border:2px solid;"></canvas>
+    </div>
+
+    <div>
+        <button id="predict">predict!</button>
+    </div>
+    <div><input type="checkbox" id="preprocessing" style="width: auto; height: auto;"><span>Display
+            Preprocessing</span></div>
+    <div><input type="checkbox" id="retrainModel" style="width: auto; height: auto;"><span>Retrain Model</span></div>
+
+    <div id="prediction"></div>
+    <div><canvas id="grey" width="280" height="280" style="top:10%;left:10%;border:2px solid;"></canvas></div>
+
+    <div><canvas id="nncanvas" width="280" height="280" style="top:10%;left:10%;border:2px solid;"></canvas></div>
+
+</body>
+
+</html>
