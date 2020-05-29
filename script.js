@@ -1,6 +1,7 @@
 import {MnistData} from './data.js';
 
 console.log ('hello tf');
+console.log (document.getElementById ('epochSetting').value);
 
 const object = {foo: {bar: 'baz'}};
 // stuff to initialize for drawing in canvas
@@ -245,7 +246,7 @@ async function train (model, data) {
   return model.fit (trainXs, trainYs, {
     batchSize: BATCH_SIZE,
     validationData: [testXs, testYs],
-    epochs: 5,
+    epochs: 10,
     shuffle: true,
     callbacks: fitCallbacks,
   });
