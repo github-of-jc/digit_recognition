@@ -1,12 +1,15 @@
 import {MnistData} from './data.js';
 
 console.log ('hello tf');
+
+const object = {foo: {bar: 'baz'}};
 // stuff to initialize for drawing in canvas
 // some of the code below was taken from a stackoverflow flag I
 // not find anymore, and adapted to my needs.
 // Thanks a ton to the original author!
 var canvas;
 var ctx; // for taking image from the canvas, context is initialized in init()
+var model = getModel ();
 
 var prevX = 0;
 var currX = 0;
@@ -18,9 +21,8 @@ var color = 'black';
 var lineWidth = 20;
 var grayscaleImg = [];
 var scaleStrokeWidth = true;
-var hasTrainedModel = false;
-var model = getModel ();
-
+var hasTrainedModel = true;
+var loadModelFromHTTP = true;
 var clearBeforeDraw = false; // controls whether canvas will be cleared on next mousedown event. Set to true after digit recognition
 
 async function showExamples (data) {
@@ -243,7 +245,7 @@ async function train (model, data) {
   return model.fit (trainXs, trainYs, {
     batchSize: BATCH_SIZE,
     validationData: [testXs, testYs],
-    epochs: 10,
+    epochs: 5,
     shuffle: true,
     callbacks: fitCallbacks,
   });
@@ -293,8 +295,9 @@ async function doMyPrediction (model, data, testDataSize = 1) {
   // t {isDisposedInternal: false, shape: Array(4), dtype: "float32", size: 784, strides: Array(3), …}
 
   console.log ('showMyexample');
-
-  await showMyExamples (tfdata);
+  if (document.getElementById ('showPredictionDetails').checked) {
+    await showMyExamples (tfdata);
+  }
 
   // predict takes in tensor, spits out tensor
   // testxs {isDisposedInternal: false, shape: Array(4), dtype: "float32", size: 784, strides: Array(3), …}
@@ -553,31 +556,44 @@ async function recognize () {
   }
 
   var onCanvas = ctx.getImageData (0, 0, 280, 280);
-  console.log ('onCanvas');
-  console.log (onCanvas);
+  // console.log ('onCanvas');
+  // console.log (onCanvas);
 
-  console.log ('nnInput');
-  console.log (nnInput); // array of length 784
+  // console.log ('nnInput');
+  // console.log (nnInput); // array of length 784
+  // console.log ('retrainModel');
+  // console.log (document.getElementById ('retrainModel').checked);
 
-  if (
-    !hasTrainedModel ||
-    document.getElementById ('retrainModel').check == true
-  ) {
-    console.log ('training new');
+  if (document.getElementById ('retrainModel').checked == true) {
+    document.getElementById ('showPredictionDetails').checked = true;
+    model = getModel ();
+    console.log ('training new model');
     const mnistdata = new MnistData ();
     //wait to load data
     await mnistdata.load ();
     // display some of the images
-    await showExamples (mnistdata);
-
+    if (document.getElementById ('showPredictionDetails').checked) {
+      await showExamples (mnistdata);
+    }
     tfvis.show.modelSummary ({name: 'Model Architecture'}, model);
 
     // wait until model is trained
+
     await train (model, mnistdata);
     // display stats of the model
-    await showAccuracy (model, mnistdata);
-    await showConfusion (model, mnistdata);
-    hasTrainedModel = true;
+    if (document.getElementById ('showPredictionDetails').checked) {
+      await showAccuracy (model, mnistdata);
+      await showConfusion (model, mnistdata);
+    }
+    // await model.save ('downloads://specialmodel');
+  } else {
+    // normall just load from http
+    console.log (
+      'loading model from https://storage.googleapis.com/echooo-xml/model/specialmodel.json'
+    );
+    model = await tf.loadLayersModel (
+      'https://cors-anywhere.herokuapp.com/https://storage.googleapis.com/echooo-xml/model/specialmodel.json'
+    );
   }
 
   // predict
@@ -585,7 +601,7 @@ async function recognize () {
 
   console.log ('prediction: ');
   console.log (prediction);
-  document.getElementById ('prediction').innerHTML = prediction;
+  document.getElementById ('prediction').innerHTML = prediction.dataSync ();
   console.log ('prediction:');
   console.log (prediction);
   clearBeforeDraw = true;
